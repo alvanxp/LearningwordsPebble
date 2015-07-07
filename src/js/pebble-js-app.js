@@ -38,10 +38,10 @@ function getWord() {
       // Send to Pebble
       Pebble.sendAppMessage(dictionary,
         function(e) {
-          console.log("Weather info sent to Pebble successfully!");
+          console.log("LearningWords info sent to Pebble successfully!");
         },
         function(e) {
-          console.log("Error sending weather info to Pebble!");
+          console.log("Error sending words info to Pebble!");
         }
       );
     }      

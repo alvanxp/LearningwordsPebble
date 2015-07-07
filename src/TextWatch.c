@@ -25,6 +25,7 @@ static struct tm *t;
 static GFont lightFont;
 static GFont boldFont;
 static TextLayer *s_word_layer;
+static TextLayer *s_to_word_layer;
 
 static char line1Str[2][BUFFER_SIZE];
 static char line2Str[2][BUFFER_SIZE];
@@ -210,9 +211,8 @@ static void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
 //app message events
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   // Store incoming information
-  static char temperature_buffer[8];
-  static char conditions_buffer[32];
-  static char weather_layer_buffer[32];
+  static char word_buffer[32];
+  static char to_word_layer_buffer[32];
   
   // Read first item
   Tuple *t = dict_read_first(iterator);
@@ -222,10 +222,10 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     // Which key was received?
     switch(t->key) {
     case KEY_WORD:
-      snprintf(temperature_buffer, sizeof(temperature_buffer),"%s", t->value->cstring);
+      snprintf(word_buffer, sizeof(word_buffer),"EN|%s", t->value->cstring);
       break;
     case KEY_TOWORD:
-      snprintf(conditions_buffer, sizeof(conditions_buffer), "%s", t->value->cstring);
+      snprintf(to_word_layer_buffer, sizeof(to_word_layer_buffer), "ES|%s", t->value->cstring);
       break;
     default:
       APP_LOG(APP_LOG_LEVEL_ERROR, "Key %d not recognized!", (int)t->key);
@@ -237,8 +237,9 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   }
   
   // Assemble full string and display
-  snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "%s, %s", temperature_buffer, conditions_buffer);
-  text_layer_set_text(s_word_layer, weather_layer_buffer);
+  //snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "%s, %s", temperature_buffer, conditions_buffer);
+  text_layer_set_text(s_word_layer, word_buffer);
+  text_layer_set_text(s_to_word_layer, to_word_layer_buffer);
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
@@ -289,6 +290,14 @@ static void init() {
   text_layer_set_text_color(s_word_layer, GColorWhite);
   text_layer_set_text_alignment(s_word_layer, GTextAlignmentCenter);
   text_layer_set_text(s_word_layer, "Loading...");
+  
+   //add line to to_word
+  // Create temperature Layer
+  s_to_word_layer = text_layer_create(GRect(0, 120, 144, 25));
+  text_layer_set_background_color(s_to_word_layer, GColorClear);
+  text_layer_set_text_color(s_to_word_layer, GColorWhite);
+  text_layer_set_text_alignment(s_to_word_layer, GTextAlignmentCenter);
+  text_layer_set_text(s_to_word_layer, "Loading...");
 
 	// Configure time on init
   time_t now = time(NULL);
@@ -304,6 +313,7 @@ static void init() {
 	layer_add_child(window_layer, text_layer_get_layer(line3.currentLayer));
 	layer_add_child(window_layer, text_layer_get_layer(line3.nextLayer));
   layer_add_child(window_layer, text_layer_get_layer(s_word_layer));
+  layer_add_child(window_layer, text_layer_get_layer(s_to_word_layer));
 
 	#if DEBUG
 	// Button functionality
