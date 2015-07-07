@@ -87,7 +87,7 @@ static void updateLineTo(Line *line, char lineStr[2][BUFFER_SIZE], char *value)
 		memcpy(lineStr[0], value, strlen(value));
 		text_layer_set_text(next, lineStr[0]);
 	}
-	
+	//borrar comentario
 	makeAnimationsForLayers(line, current, next);
 }
 

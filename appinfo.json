@@ -13,13 +13,15 @@
     "resources": {
         "media": [
             {
-                "file": "fonts/gotham_light_31.ttf",
-                "name": "FONT_GOTHAM_LIGHT_31",
+                "compatibility": "2.7",
+                "file": "fonts/perfect-dos-vga.ttf",
+                "name": "FONT_PERFECT_DOS_48",
                 "type": "font"
             },
             {
-                "file": "fonts/gotham_bold_36.ttf",
-                "name": "FONT_GOTHAM_BOLD_36",
+                "compatibility": "2.7",
+                "file": "fonts/perfect-dos-vga.ttf",
+                "name": "FONT_PERFECT_DOS_20",
                 "type": "font"
             },
             {
@@ -29,15 +31,13 @@
                 "type": "png"
             },
             {
-                "compatibility": "2.7",
-                "file": "fonts/perfect-dos-vga.ttf",
-                "name": "FONT_PERFECT_DOS_20",
+                "file": "fonts/gotham_bold_36.ttf",
+                "name": "FONT_GOTHAM_BOLD_36",
                 "type": "font"
             },
             {
-                "compatibility": "2.7",
-                "file": "fonts/perfect-dos-vga.ttf",
-                "name": "FONT_PERFECT_DOS_48",
+                "file": "fonts/gotham_light_31.ttf",
+                "name": "FONT_GOTHAM_LIGHT_31",
                 "type": "font"
             }
         ]
