@@ -1,0 +1,53 @@
+{
+    "appKeys": {
+        "KEY_DESCRIPTION": 2,
+        "KEY_TOWORD": 1,
+        "KEY_WORD": 0
+    },
+    "capabilities": [
+        "location"
+    ],
+    "companyName": "Alvan",
+    "longName": "LearningWords",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "fonts/gotham_light_31.ttf",
+                "name": "FONT_GOTHAM_LIGHT_31",
+                "type": "font"
+            },
+            {
+                "file": "fonts/gotham_bold_36.ttf",
+                "name": "FONT_GOTHAM_BOLD_36",
+                "type": "font"
+            },
+            {
+                "file": "images/background.png",
+                "menuIcon": true,
+                "name": "IMAGE_BACKGROUND",
+                "type": "png"
+            },
+            {
+                "compatibility": "2.7",
+                "file": "fonts/perfect-dos-vga.ttf",
+                "name": "FONT_PERFECT_DOS_20",
+                "type": "font"
+            },
+            {
+                "compatibility": "2.7",
+                "file": "fonts/perfect-dos-vga.ttf",
+                "name": "FONT_PERFECT_DOS_48",
+                "type": "font"
+            }
+        ]
+    },
+    "sdkVersion": "2",
+    "shortName": "LearningWords",
+    "uuid": "07884769-f2e5-4f72-ad05-48664563e44d",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
