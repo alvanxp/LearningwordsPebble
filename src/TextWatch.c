@@ -20,16 +20,21 @@ typedef struct {
 static Line line1;
 static Line line2;
 static Line line3;
+static Line line4;
 
 static struct tm *t;
 static GFont lightFont;
 static GFont boldFont;
+/*
 static TextLayer *s_word_layer;
 static TextLayer *s_to_word_layer;
+*/
 
 static char line1Str[2][BUFFER_SIZE];
 static char line2Str[2][BUFFER_SIZE];
 static char line3Str[2][BUFFER_SIZE];
+static char line4Str[2][BUFFER_SIZE];
+static char line5Str[2][BUFFER_SIZE];
 
 
 
@@ -72,6 +77,8 @@ static void makeAnimationsForLayers(Line *line, TextLayer *current, TextLayer *n
 // Update line
 static void updateLineTo(Line *line, char lineStr[2][BUFFER_SIZE], char *value)
 {
+   APP_LOG(APP_LOG_LEVEL_INFO, "updateLineTo lineStr 0 : %s",lineStr[0] );
+   APP_LOG(APP_LOG_LEVEL_INFO, "updateLineTo lineStr 1 : %s",lineStr[1] );
 	TextLayer *next, *current;
 	
 	GRect rect = layer_get_frame(text_layer_get_layer(line->currentLayer));
@@ -80,12 +87,16 @@ static void updateLineTo(Line *line, char lineStr[2][BUFFER_SIZE], char *value)
 	
 	// Update correct text only
 	if (current == line->currentLayer) {
+    APP_LOG(APP_LOG_LEVEL_INFO, "updateLineTo current == line->currentLayer" );
 		memset(lineStr[1], 0, BUFFER_SIZE);
 		memcpy(lineStr[1], value, strlen(value));
+		APP_LOG(APP_LOG_LEVEL_INFO, "###### text layer value %s", lineStr[1] );
 		text_layer_set_text(next, lineStr[1]);
 	} else {
+    APP_LOG(APP_LOG_LEVEL_INFO, "updateLineTo current != line->currentLayer" );
 		memset(lineStr[0], 0, BUFFER_SIZE);
 		memcpy(lineStr[0], value, strlen(value));
+		 APP_LOG(APP_LOG_LEVEL_INFO, "###### text layer value %s", lineStr[0] );
 		text_layer_set_text(next, lineStr[0]);
 	}
 	//borrar comentario
@@ -97,12 +108,19 @@ static bool needToUpdateLine(Line *line, char lineStr[2][BUFFER_SIZE], char *nex
 {
 	char *currentStr;
 	GRect rect = layer_get_frame(text_layer_get_layer(line->currentLayer));
+  APP_LOG(APP_LOG_LEVEL_INFO, "############ %d", rect.origin.x);
 	currentStr = (rect.origin.x == 0) ? lineStr[0] : lineStr[1];
 
+   APP_LOG(APP_LOG_LEVEL_INFO, "############ first condition %d", memcmp(currentStr, nextValue, strlen(nextValue)));
+   APP_LOG(APP_LOG_LEVEL_INFO, "############ second condition %d", strlen(nextValue));
+   APP_LOG(APP_LOG_LEVEL_INFO, "############ third condition %d", strlen(currentStr));
 	if (memcmp(currentStr, nextValue, strlen(nextValue)) != 0 ||
 		(strlen(nextValue) == 0 && strlen(currentStr) != 0)) {
 		return true;
+     	APP_LOG(APP_LOG_LEVEL_INFO, "############ TRUE");
 	}
+  
+	APP_LOG(APP_LOG_LEVEL_INFO, "############ FALSE");
 	return false;
 }
 
@@ -125,6 +143,7 @@ static void display_time(struct tm *t)
 	if (needToUpdateLine(&line3, line3Str, textLine3)) {
 		updateLineTo(&line3, line3Str, textLine3);	
 	}
+   
 }
 
 // Update screen without animation first time we start the watchface
@@ -135,6 +154,8 @@ static void display_initial_time(struct tm *t)
 	text_layer_set_text(line1.currentLayer, line1Str[0]);
 	text_layer_set_text(line2.currentLayer, line2Str[0]);
 	text_layer_set_text(line3.currentLayer, line3Str[0]);
+	text_layer_set_text(line4.currentLayer, line4Str[0]);
+	//text_layer_set_text(line5.currentLayer, line5Str[0]);
 }
 
 // Debug methods. For quickly debugging enable debug macro on top to transform the watchface into
@@ -194,7 +215,7 @@ static void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
 	t = tick_time;
   display_time(tick_time);
   
-  // Get weather update every 30 minutes
+  // Get weather update every 9 minutes
   if(tick_time->tm_min % 1 == 0) {
     // Begin dictionary
     DictionaryIterator *iter;
@@ -203,6 +224,10 @@ static void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
     // Add a key-value pair
     dict_write_uint8(iter, 0, 0);
 
+	//char textLine4[BUFFER_SIZE];
+	//if (needToUpdateLine(&line4, line4Str, textLine4)) {
+		//updateLineTo(&line4, line4Str, textLine4);	
+	//}
     // Send the message!
     app_message_outbox_send();
   }
@@ -213,7 +238,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   // Store incoming information
   static char word_buffer[32];
   static char to_word_layer_buffer[32];
-  
+  char textLine4[BUFFER_SIZE];
   // Read first item
   Tuple *t = dict_read_first(iterator);
 
@@ -221,25 +246,37 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   while(t != NULL) {
     // Which key was received?
     switch(t->key) {
-    case KEY_WORD:
-      snprintf(word_buffer, sizeof(word_buffer),"EN|%s", t->value->cstring);
-      break;
-    case KEY_TOWORD:
-      snprintf(to_word_layer_buffer, sizeof(to_word_layer_buffer), "ES|%s", t->value->cstring);
-      break;
-    default:
-      APP_LOG(APP_LOG_LEVEL_ERROR, "Key %d not recognized!", (int)t->key);
-      break;
+		case KEY_WORD:
+		
+		  snprintf(textLine4, sizeof(textLine4),t->value->cstring);
+      APP_LOG(APP_LOG_LEVEL_INFO, "value : %s",t->value->cstring );
+		  //snprintf(word_buffer, sizeof(word_buffer),"EN|%s", t->value->cstring);
+		  break;
+		case KEY_TOWORD:
+		  //snprintf(to_word_layer_buffer, sizeof(to_word_layer_buffer), "ES|%s", t->value->cstring);
+		  break;
+		default:
+		  APP_LOG(APP_LOG_LEVEL_ERROR, "Key %d not recognized!", (int)t->key);
+		  break;
     }
+    
+
+
 
     // Look for next item
     t = dict_read_next(iterator);
   }
   
+  APP_LOG(APP_LOG_LEVEL_INFO, "############  linea 4 %s", textLine4);
+  	if (needToUpdateLine(&line4, line4Str, textLine4)) {
+    APP_LOG(APP_LOG_LEVEL_INFO, "need to update Line");
+		updateLineTo(&line4, line4Str,  textLine4);	
+	}
+  
   // Assemble full string and display
   //snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "%s, %s", temperature_buffer, conditions_buffer);
-  text_layer_set_text(s_word_layer, word_buffer);
-  text_layer_set_text(s_to_word_layer, to_word_layer_buffer);
+  //text_layer_set_text(line4.currentLayer, line4Str[0]);
+ // text_layer_set_text(s_to_word_layer, to_word_layer_buffer);
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
@@ -281,11 +318,28 @@ static void init() {
 	line3.nextLayer = text_layer_create(GRect(144, 68, 144, 50));
 	configureLightLayer(line3.currentLayer);
 	configureLightLayer(line3.nextLayer);
+	
+	// 4th layers
+	line4.currentLayer = text_layer_create(GRect(0, 99, 144, 50));
+	line4.nextLayer = text_layer_create(GRect(144, 99, 144, 50));
+	configureLightLayer(line4.currentLayer);
+	configureLightLayer(line4.nextLayer);
+	
+  snprintf(line4Str[0], sizeof(line4Str[0]),"...");
+
+	// 5th layers
+	//line5.currentLayer = text_layer_create(GRect(0, 68, 144, 50));
+	//line5.nextLayer = text_layer_create(GRect(144, 68, 144, 50));
+	//configureLightLayer(line5.currentLayer);
+	//configureLightLayer(line5.nextLayer);
   
+  //draw line
+  //graphics_draw_pixel(window,GPoint(0), CGPoint(144));
   
   //add line to word
   // Create temperature Layer
-  s_word_layer = text_layer_create(GRect(0, 100, 144, 25));
+  /*
+  s_word_layer = text_layer_create(GRect(0, 100, 144, 35));
   text_layer_set_background_color(s_word_layer, GColorClear);
   text_layer_set_text_color(s_word_layer, GColorWhite);
   text_layer_set_text_alignment(s_word_layer, GTextAlignmentCenter);
@@ -293,12 +347,12 @@ static void init() {
   
    //add line to to_word
   // Create temperature Layer
-  s_to_word_layer = text_layer_create(GRect(0, 120, 144, 25));
+  s_to_word_layer = text_layer_create(GRect(0, 135, 144, 35));
   text_layer_set_background_color(s_to_word_layer, GColorClear);
   text_layer_set_text_color(s_to_word_layer, GColorWhite);
-  text_layer_set_text_alignment(s_to_word_layer, GTextAlignmentCenter);
+  text_layer_set_text_alignmen t(s_to_word_layer, GTextAlignmentCenter);
   text_layer_set_text(s_to_word_layer, "Loading...");
-
+*/
 	// Configure time on init
   time_t now = time(NULL);
   struct tm *t = localtime(&now);
@@ -312,9 +366,13 @@ static void init() {
 	layer_add_child(window_layer, text_layer_get_layer(line2.nextLayer));
 	layer_add_child(window_layer, text_layer_get_layer(line3.currentLayer));
 	layer_add_child(window_layer, text_layer_get_layer(line3.nextLayer));
+	layer_add_child(window_layer, text_layer_get_layer(line4.currentLayer));
+	layer_add_child(window_layer, text_layer_get_layer(line4.nextLayer));
+	/*
   layer_add_child(window_layer, text_layer_get_layer(s_word_layer));
   layer_add_child(window_layer, text_layer_get_layer(s_to_word_layer));
-
+  */
+  text_layer_set_text(line4.currentLayer, "...");
 	#if DEBUG
 	// Button functionality
 	window_set_click_config_provider(window, (ClickConfigProvider) click_config_provider);

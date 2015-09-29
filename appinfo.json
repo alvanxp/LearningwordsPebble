@@ -42,10 +42,13 @@
             }
         ]
     },
-    "sdkVersion": "2",
+    "sdkVersion": "3",
     "shortName": "LearningWords",
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
     "uuid": "07884769-f2e5-4f72-ad05-48664563e44d",
-    "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {
         "watchface": true
