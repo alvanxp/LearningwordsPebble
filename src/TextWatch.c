@@ -20,7 +20,6 @@ typedef struct {
 static Line line1;
 static Line line2;
 static Line line3;
-static Line line4;
 
 static struct tm *t;
 static GFont lightFont;
@@ -33,8 +32,6 @@ static TextLayer *s_to_word_layer;
 static char line1Str[2][BUFFER_SIZE];
 static char line2Str[2][BUFFER_SIZE];
 static char line3Str[2][BUFFER_SIZE];
-static char line4Str[2][BUFFER_SIZE];
-static char line5Str[2][BUFFER_SIZE];
 
 
 
@@ -77,8 +74,8 @@ static void makeAnimationsForLayers(Line *line, TextLayer *current, TextLayer *n
 // Update line
 static void updateLineTo(Line *line, char lineStr[2][BUFFER_SIZE], char *value)
 {
-   APP_LOG(APP_LOG_LEVEL_INFO, "updateLineTo lineStr 0 : %s",lineStr[0] );
-   APP_LOG(APP_LOG_LEVEL_INFO, "updateLineTo lineStr 1 : %s",lineStr[1] );
+  // APP_LOG(APP_LOG_LEVEL_INFO, "updateLineTo lineStr 0 : %s",lineStr[0] );
+  // APP_LOG(APP_LOG_LEVEL_INFO, "updateLineTo lineStr 1 : %s",lineStr[1] );
 	TextLayer *next, *current;
 	
 	GRect rect = layer_get_frame(text_layer_get_layer(line->currentLayer));
@@ -87,16 +84,14 @@ static void updateLineTo(Line *line, char lineStr[2][BUFFER_SIZE], char *value)
 	
 	// Update correct text only
 	if (current == line->currentLayer) {
-    APP_LOG(APP_LOG_LEVEL_INFO, "updateLineTo current == line->currentLayer" );
+    //APP_LOG(APP_LOG_LEVEL_INFO, "updateLineTo current == line->currentLayer" );
 		memset(lineStr[1], 0, BUFFER_SIZE);
 		memcpy(lineStr[1], value, strlen(value));
-		APP_LOG(APP_LOG_LEVEL_INFO, "###### text layer value %s", lineStr[1] );
+		//APP_LOG(APP_LOG_LEVEL_INFO, "###### text layer value %s", lineStr[1] );
 		text_layer_set_text(next, lineStr[1]);
 	} else {
-    APP_LOG(APP_LOG_LEVEL_INFO, "updateLineTo current != line->currentLayer" );
 		memset(lineStr[0], 0, BUFFER_SIZE);
 		memcpy(lineStr[0], value, strlen(value));
-		 APP_LOG(APP_LOG_LEVEL_INFO, "###### text layer value %s", lineStr[0] );
 		text_layer_set_text(next, lineStr[0]);
 	}
 	//borrar comentario
@@ -108,19 +103,13 @@ static bool needToUpdateLine(Line *line, char lineStr[2][BUFFER_SIZE], char *nex
 {
 	char *currentStr;
 	GRect rect = layer_get_frame(text_layer_get_layer(line->currentLayer));
-  APP_LOG(APP_LOG_LEVEL_INFO, "############ %d", rect.origin.x);
 	currentStr = (rect.origin.x == 0) ? lineStr[0] : lineStr[1];
 
-   APP_LOG(APP_LOG_LEVEL_INFO, "############ first condition %d", memcmp(currentStr, nextValue, strlen(nextValue)));
-   APP_LOG(APP_LOG_LEVEL_INFO, "############ second condition %d", strlen(nextValue));
-   APP_LOG(APP_LOG_LEVEL_INFO, "############ third condition %d", strlen(currentStr));
 	if (memcmp(currentStr, nextValue, strlen(nextValue)) != 0 ||
 		(strlen(nextValue) == 0 && strlen(currentStr) != 0)) {
 		return true;
-     	APP_LOG(APP_LOG_LEVEL_INFO, "############ TRUE");
 	}
   
-	APP_LOG(APP_LOG_LEVEL_INFO, "############ FALSE");
 	return false;
 }
 
@@ -154,7 +143,7 @@ static void display_initial_time(struct tm *t)
 	text_layer_set_text(line1.currentLayer, line1Str[0]);
 	text_layer_set_text(line2.currentLayer, line2Str[0]);
 	text_layer_set_text(line3.currentLayer, line3Str[0]);
-	text_layer_set_text(line4.currentLayer, line4Str[0]);
+	//text_layer_set_text(line4.currentLayer, line4Str[0]);
 	//text_layer_set_text(line5.currentLayer, line5Str[0]);
 }
 
@@ -216,7 +205,7 @@ static void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
   display_time(tick_time);
   
   // Get weather update every 9 minutes
-  if(tick_time->tm_min % 1 == 0) {
+  if(tick_time->tm_min % 8 == 0) {
     // Begin dictionary
     DictionaryIterator *iter;
     app_message_outbox_begin(&iter);
@@ -259,19 +248,15 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 		  APP_LOG(APP_LOG_LEVEL_ERROR, "Key %d not recognized!", (int)t->key);
 		  break;
     }
-    
-
-
-
     // Look for next item
     t = dict_read_next(iterator);
   }
   
-  APP_LOG(APP_LOG_LEVEL_INFO, "############  linea 4 %s", textLine4);
-  	if (needToUpdateLine(&line4, line4Str, textLine4)) {
-    APP_LOG(APP_LOG_LEVEL_INFO, "need to update Line");
-		updateLineTo(&line4, line4Str,  textLine4);	
-	}
+  //APP_LOG(APP_LOG_LEVEL_INFO, "############  linea 4 %s", textLine4);
+  	//if (needToUpdateLine(&line4, line4Str, textLine4)) {
+    //APP_LOG(APP_LOG_LEVEL_INFO, "need to update Line");
+		//updateLineTo(&line4, line4Str,  textLine4);	
+//	}
   
   // Assemble full string and display
   //snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "%s, %s", temperature_buffer, conditions_buffer);
@@ -320,12 +305,12 @@ static void init() {
 	configureLightLayer(line3.nextLayer);
 	
 	// 4th layers
-	line4.currentLayer = text_layer_create(GRect(0, 99, 144, 50));
-	line4.nextLayer = text_layer_create(GRect(144, 99, 144, 50));
-	configureLightLayer(line4.currentLayer);
-	configureLightLayer(line4.nextLayer);
+	//line4.currentLayer = text_layer_create(GRect(0, 99, 144, 50));
+	//line4.nextLayer = text_layer_create(GRect(144, 99, 144, 50));
+	//configureLightLayer(line4.currentLayer);
+	//configureLightLayer(line4.nextLayer);
 	
-  snprintf(line4Str[0], sizeof(line4Str[0]),"...");
+  //snprintf(line4Str[0], sizeof(line4Str[0]),"...");
 
 	// 5th layers
 	//line5.currentLayer = text_layer_create(GRect(0, 68, 144, 50));
@@ -366,13 +351,13 @@ static void init() {
 	layer_add_child(window_layer, text_layer_get_layer(line2.nextLayer));
 	layer_add_child(window_layer, text_layer_get_layer(line3.currentLayer));
 	layer_add_child(window_layer, text_layer_get_layer(line3.nextLayer));
-	layer_add_child(window_layer, text_layer_get_layer(line4.currentLayer));
-	layer_add_child(window_layer, text_layer_get_layer(line4.nextLayer));
+	//layer_add_child(window_layer, text_layer_get_layer(line4.currentLayer));
+	//layer_add_child(window_layer, text_layer_get_layer(line4.nextLayer));
 	/*
   layer_add_child(window_layer, text_layer_get_layer(s_word_layer));
   layer_add_child(window_layer, text_layer_get_layer(s_to_word_layer));
   */
-  text_layer_set_text(line4.currentLayer, "...");
+  //text_layer_set_text(line4.currentLayer, "...");
 	#if DEBUG
 	// Button functionality
 	window_set_click_config_provider(window, (ClickConfigProvider) click_config_provider);
@@ -381,9 +366,9 @@ static void init() {
   tick_timer_service_subscribe(MINUTE_UNIT, handle_minute_tick);
   
     // Register callbacks
-  app_message_register_inbox_received(inbox_received_callback);
-  app_message_register_inbox_dropped(inbox_dropped_callback);
-  app_message_register_outbox_failed(outbox_failed_callback);
+  //app_message_register_inbox_received(inbox_received_callback);
+  //app_message_register_inbox_dropped(inbox_dropped_callback);
+  //app_message_register_outbox_failed(outbox_failed_callback);
   app_message_register_outbox_sent(outbox_sent_callback);
   
   // Open AppMessage

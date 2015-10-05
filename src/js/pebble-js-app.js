@@ -24,10 +24,11 @@ function getWord() {
       var description = json.Description;
       console.log("description is " + description);
     
+    
+  var body = "EN|"+fromWord + "\n"+ "ES|"+toWord+"\n"+"- "+description;
       
-  
       
-      
+      Pebble.showSimpleNotificationOnPebble("LearningWords", body);
       // Assemble dictionary using our keys
       var dictionary = {
         "KEY_WORD": fromWord,
@@ -36,14 +37,14 @@ function getWord() {
       };
 
       // Send to Pebble
-      Pebble.sendAppMessage(dictionary,
-        function(e) {
-          console.log("LearningWords info sent to Pebble successfully!");
-        },
-        function(e) {
-          console.log("Error sending words info to Pebble!");
-        }
-      );
+      //Pebble.sendAppMessage(dictionary,
+       // function(e) {
+       //   console.log("LearningWords info sent to Pebble successfully!");
+        //},
+        //function(e) {
+          //console.log("Error sending words info to Pebble!: "+  e);
+        //}
+      //);
     }      
   );
 }
@@ -61,7 +62,7 @@ Pebble.addEventListener('ready',
 // Listen for when an AppMessage is received
 Pebble.addEventListener('appmessage',
   function(e) {
-    console.log("AppMessage received!");
+    console.log("AppMessage received!" +e);
     getWord();
   }                     
 );
